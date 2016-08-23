@@ -30,4 +30,4 @@ recalculateRules newPassword model =
 
 recalculateRule : String -> PasswordRule -> PasswordRule
 recalculateRule password passwordRule =
-    { passwordRule | valid = ( Regex.regex passwordRule.regEx |> Regex.contains password) }
+    { passwordRule | valid = (Regex.contains (Regex.regex passwordRule.regEx)  password) }
