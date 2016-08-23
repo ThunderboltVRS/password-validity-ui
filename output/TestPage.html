@@ -1,0 +1,14 @@
+<form action="demo_form.asp">
+  Password: <input id="passwordBox" type="text" name="fname" oninput="onPasswordInput(this)"><br>
+</form>
+<div id="elmContainer" style="height: 400px;">
+</div>
+<script src="elm.js"></script>
+<script>
+    var node = document.getElementById('elmContainer');
+    var app = Elm.Main.embed(node);
+
+    function onPasswordInput(sender){
+        app.ports.alterPassword.send(sender.value);
+    }
+</script>
