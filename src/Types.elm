@@ -7,8 +7,15 @@ type Msg
     = Mdl (Material.Msg Msg)
     | AlterPassword String
 
-
 type alias PasswordRule =
+    { regEx : String
+    , description : String
+    , mandatory : Bool
+    , valid : Bool
+    , subRules : List SubRule
+    }
+
+type alias SubRule =
     { regEx : String
     , description : String
     , mandatory : Bool
@@ -18,7 +25,7 @@ type alias PasswordRule =
 
 type alias Model =
     { passwordText : String
-    , rules : List (PasswordRule)
+    , rules : List PasswordRule
     , valid : Bool
     , mdl : Material.Model
     }
