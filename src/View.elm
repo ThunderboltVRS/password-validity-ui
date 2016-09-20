@@ -8,11 +8,15 @@ import Material.Options
 import Html exposing (..)
 import Types exposing (..)
 
+
 validColor : String
-validColor = "#00b300"
+validColor =
+    "#00b300"
+
 
 invalidColor : String
-invalidColor = "#e60000"
+invalidColor =
+    "#e60000"
 
 
 view : Model -> Html Msg
@@ -26,17 +30,20 @@ layoutTable model =
         []
         (rulesDisplay model)
 
+
 rulesDisplay : Model -> List (Html Types.Msg)
 rulesDisplay model =
-    List.append (List.map (\e -> ruleRow model.mdl e) model.rules) [ allRuleRow model.mdl model]
+    List.append (List.map (\e -> ruleRow model.mdl e) model.rules) [ allRuleRow model.mdl model ]
 
-allRuleRow: Material.Model -> Model -> Html Types.Msg
+
+allRuleRow : Material.Model -> Model -> Html Types.Msg
 allRuleRow mdl model =
     tr
         []
         [ td [] [ ruleIcon mdl model.valid ]
-        , td [] [ ruleText "All Rules"]
+        , td [] [ ruleText "All Rules" ]
         ]
+
 
 ruleIcon : Material.Model -> Bool -> Html Types.Msg
 ruleIcon mdl valid =
@@ -45,29 +52,34 @@ ruleIcon mdl valid =
     else
         Material.Icon.view "indeterminate_check_box" [ Material.Options.css "color" invalidColor ]
 
+
 ruleRow : Material.Model -> PasswordRule -> Html Types.Msg
 ruleRow mdl passwordRule =
     tr
         []
-        (List.append [td [] [ ruleIcon mdl passwordRule.valid ]] ([ruleCell passwordRule]))
+        (List.append [ td [] [ ruleIcon mdl passwordRule.valid ] ] ([ ruleCell passwordRule ]))
+
 
 ruleCell : PasswordRule -> Html Types.Msg
 ruleCell passwordRule =
-     td [] 
-        (List.append [div [] [ruleText passwordRule.description]] (subRules passwordRule))
-        
+    td []
+        (List.append [ div [] [ ruleText passwordRule.description ] ] (subRules passwordRule))
+
 
 subRules : PasswordRule -> List (Html Types.Msg)
 subRules passwordRule =
     (List.filter (\s -> not s.valid) passwordRule.subRules |> List.map (\s -> subRule s))
 
+
 subRule : SubRule -> Html Types.Msg
 subRule subRule =
-    div [] [subRuleText subRule.description]
+    div [] [ subRuleText subRule.description ]
+
 
 ruleText : String -> Html Types.Msg
 ruleText description =
     text description
+
 
 subRuleText : String -> Html Types.Msg
 subRuleText description =
