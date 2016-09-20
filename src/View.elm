@@ -7,6 +7,8 @@ import Material
 import Material.Options
 import Html exposing (..)
 import Types exposing (..)
+import Html.Attributes exposing (..)
+import String
 
 
 validColor : String
@@ -19,6 +21,26 @@ invalidColor =
     "#e60000"
 
 
+mainTableWidth : String
+mainTableWidth =
+    "400px"
+
+
+iconCellWidth : String
+iconCellWidth =
+    "40px"
+
+
+ruleWidth : String
+ruleWidth =
+    "360px"
+
+
+subRuleWidth : String
+subRuleWidth =
+    "300px"
+
+
 view : Model -> Html Msg
 view model =
     layoutTable model
@@ -27,7 +49,10 @@ view model =
 layoutTable : Model -> Html Types.Msg
 layoutTable model =
     table
-        []
+        [ Html.Attributes.style
+            [ ( "width", mainTableWidth )
+            ]
+        ]
         (rulesDisplay model)
 
 
@@ -39,8 +64,14 @@ rulesDisplay model =
 allRuleRow : Material.Model -> Model -> Html Types.Msg
 allRuleRow mdl model =
     tr
-        []
-        [ td [] [ ruleIcon mdl model.valid ]
+        [ Html.Attributes.style [ ( "width", "100%" ) ] ]
+        [ td
+            [ Html.Attributes.style
+                [ ( "width", iconCellWidth )
+                , ( "vertical-align", "initial" )
+                ]
+            ]
+            [ ruleIcon mdl model.valid ]
         , td [] [ ruleText "All Rules" ]
         ]
 
@@ -56,14 +87,33 @@ ruleIcon mdl valid =
 ruleRow : Material.Model -> PasswordRule -> Html Types.Msg
 ruleRow mdl passwordRule =
     tr
-        []
-        (List.append [ td [] [ ruleIcon mdl passwordRule.valid ] ] ([ ruleCell passwordRule ]))
+        [ Html.Attributes.style [ ( "width", "100%" ) ] ]
+        (List.append
+            [ td
+                [ Html.Attributes.style
+                    [ ( "width", iconCellWidth )
+                    , ( "vertical-align", "initial" )
+                    ]
+                ]
+                [ ruleIcon mdl passwordRule.valid ]
+            ]
+            ([ ruleCell passwordRule ])
+        )
 
 
 ruleCell : PasswordRule -> Html Types.Msg
 ruleCell passwordRule =
     td []
-        (List.append [ div [] [ ruleText passwordRule.description ] ] (subRules passwordRule))
+        (List.append
+            [ div
+                [ Html.Attributes.style
+                    [ ( "width", ruleWidth )
+                    ]
+                ]
+                [ ruleText passwordRule.description ]
+            ]
+            (subRules passwordRule)
+        )
 
 
 subRules : PasswordRule -> List (Html Types.Msg)
@@ -73,7 +123,13 @@ subRules passwordRule =
 
 subRule : SubRule -> Html Types.Msg
 subRule subRule =
-    div [] [ subRuleText subRule.description ]
+    div
+        [ Html.Attributes.style
+            [ ( "padding-left", "20px" )
+            , ( "width", subRuleWidth )
+            ]
+        ]
+        [ subRuleText subRule.description ]
 
 
 ruleText : String -> Html Types.Msg
@@ -83,4 +139,4 @@ ruleText description =
 
 subRuleText : String -> Html Types.Msg
 subRuleText description =
-    text description
+    text (String.concat [ "- ", description ])
