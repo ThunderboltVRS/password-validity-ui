@@ -1,18 +1,20 @@
 module Types exposing (..)
 
-import Material
-
-
 type Msg
-    = Mdl (Material.Msg Msg)
-    | AlterPassword String
+    = AlterPassword String
+
+
+type Validity
+    = Yes
+    | Partial
+    | No
 
 
 type alias PasswordRule =
     { regEx : String
     , description : String
     , mandatory : Bool
-    , valid : Bool
+    , validity : Validity
     , subRules : List SubRule
     }
 
@@ -21,13 +23,12 @@ type alias SubRule =
     { regEx : String
     , description : String
     , mandatory : Bool
-    , valid : Bool
+    , validity : Validity
     }
 
 
 type alias Model =
     { passwordText : String
     , rules : List PasswordRule
-    , valid : Bool
-    , mdl : Material.Model
+    , validity : Validity
     }

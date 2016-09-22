@@ -2,13 +2,23 @@ module View exposing (..)
 
 import Html exposing (..)
 import Types exposing (..)
-import Material.Icon
-import Material
-import Material.Options
-import Html exposing (..)
-import Types exposing (..)
 import Html.Attributes exposing (..)
 import String
+
+
+validPath : String
+validPath =
+    "../UI/Image/md_check_box_green_24dp_1x.png"
+
+
+invalidPath : String
+invalidPath =
+    "../UI/Image/md_indeterminate_check_box_red_24dp_1x.png"
+
+
+partialPath : String
+partialPath =
+    "../UI/Image/md_indeterminate_check_box_orange_24dp_1x.png"
 
 
 validColor : String
@@ -16,9 +26,14 @@ validColor =
     "#00b300"
 
 
+partialColor : String
+partialColor =
+    "#ff8000"
+
+
 invalidColor : String
 invalidColor =
-    "#e60000"
+    "black"
 
 
 mainTableWidth : String
@@ -41,6 +56,21 @@ subRuleWidth =
     "300px"
 
 
+ruleTextSize : Int
+ruleTextSize =
+    19
+
+
+subRuleTextSize : Int
+subRuleTextSize =
+    17
+
+
+minRowHeight : Int
+minRowHeight =
+    50
+
+
 view : Model -> Html Msg
 view model =
     layoutTable model
@@ -58,36 +88,47 @@ layoutTable model =
 
 rulesDisplay : Model -> List (Html Types.Msg)
 rulesDisplay model =
-    List.append (List.map (\e -> ruleRow model.mdl e) model.rules) [ allRuleRow model.mdl model ]
+    List.append (List.map (\e -> ruleRow e) model.rules) []
 
 
-allRuleRow : Material.Model -> Model -> Html Types.Msg
-allRuleRow mdl model =
-    tr
-        [ Html.Attributes.style [ ( "width", "100%" ) ] ]
-        [ td
-            [ Html.Attributes.style
-                [ ( "width", iconCellWidth )
-                , ( "vertical-align", "initial" )
-                ]
-            ]
-            [ ruleIcon mdl model.valid ]
-        , td [] [ ruleText "All Rules" ]
+ruleIcon : Validity -> Html Types.Msg
+ruleIcon validity =
+    img
+        [ Html.Attributes.src (validityIcon validity)
         ]
+        []
 
 
-ruleIcon : Material.Model -> Bool -> Html Types.Msg
-ruleIcon mdl valid =
-    if valid then
-        Material.Icon.view "check_box" [ Material.Options.css "color" validColor ]
-    else
-        Material.Icon.view "indeterminate_check_box" [ Material.Options.css "color" invalidColor ]
+validityIcon : Validity -> String
+validityIcon validity =
+    case validity of
+        Yes ->
+            validPath
+
+        No ->
+            invalidPath
+
+        Partial ->
+            partialPath
 
 
-ruleRow : Material.Model -> PasswordRule -> Html Types.Msg
-ruleRow mdl passwordRule =
+validityColor : Validity -> String
+validityColor validity =
+    case validity of
+        Yes ->
+            validColor
+
+        No ->
+            invalidColor
+
+        Partial ->
+            partialColor
+
+
+ruleRow : PasswordRule -> Html Types.Msg
+ruleRow passwordRule =
     tr
-        [ Html.Attributes.style [ ( "width", "100%" ) ] ]
+        [ Html.Attributes.style ruleRowStyle ]
         (List.append
             [ td
                 [ Html.Attributes.style
@@ -95,7 +136,7 @@ ruleRow mdl passwordRule =
                     , ( "vertical-align", "initial" )
                     ]
                 ]
-                [ ruleIcon mdl passwordRule.valid ]
+                [ div [ Html.Attributes.style [ ( "min-height", ((toString minRowHeight) ++ "px") ) ] ] [ ruleIcon passwordRule.validity ] ]
             ]
             ([ ruleCell passwordRule ])
         )
@@ -103,12 +144,13 @@ ruleRow mdl passwordRule =
 
 ruleCell : PasswordRule -> Html Types.Msg
 ruleCell passwordRule =
-    td []
+    td
+        [ Html.Attributes.style [ ( "vertical-align", "top" ) ]
+        ]
         (List.append
             [ div
                 [ Html.Attributes.style
-                    [ ( "width", ruleWidth )
-                    ]
+                    (List.append ([ ( "width", ruleWidth ), ( "color", validityColor passwordRule.validity ) ]) (textStyle ruleTextSize))
                 ]
                 [ ruleText passwordRule.description ]
             ]
@@ -118,16 +160,14 @@ ruleCell passwordRule =
 
 subRules : PasswordRule -> List (Html Types.Msg)
 subRules passwordRule =
-    (List.filter (\s -> not s.valid) passwordRule.subRules |> List.map (\s -> subRule s))
+    (List.filter (\s -> s.validity == No) passwordRule.subRules |> List.map (\s -> subRule s))
 
 
 subRule : SubRule -> Html Types.Msg
 subRule subRule =
     div
         [ Html.Attributes.style
-            [ ( "padding-left", "20px" )
-            , ( "width", subRuleWidth )
-            ]
+            (List.append ([ ( "padding", "2px 2px 2px 15px" ), ( "width", subRuleWidth ), ( "color", partialColor ) ]) (textStyle subRuleTextSize))
         ]
         [ subRuleText subRule.description ]
 
@@ -140,3 +180,19 @@ ruleText description =
 subRuleText : String -> Html Types.Msg
 subRuleText description =
     text (String.concat [ "- ", description ])
+
+
+textStyle : Int -> List ( String, String )
+textStyle fontSize =
+    [ ( "opacity", "0.9" )
+    , ( "font-weight", "400" )
+    , ( "font-size", (toString fontSize) ++ "px" )
+    , ( "vertical-align", "top" )
+    , ( "font-family", "Segoe UI" )
+    ]
+
+
+ruleRowStyle : List ( String, String )
+ruleRowStyle =
+    [ ( "width", "100%" )
+    ]

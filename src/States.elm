@@ -1,10 +1,8 @@
 module States exposing (..)
 
 import Types exposing (..)
-import Material
 import Ports exposing (..)
 import String exposing (..)
-import Regex
 
 
 defaultModel : ( Model, Cmd Msg )
@@ -16,50 +14,49 @@ initialModel : Model
 initialModel =
     { passwordText = ""
     , rules =
-        [ { regEx = "(?=.*\\d)"
-          , description = "At least one number"
+        [ { regEx = ".{8,}"
+          , description = "A minimum of 8 characters"
           , mandatory = True
-          , valid = False
+          , validity = No
+          , subRules = []
+          }
+        , { regEx = "(?=.*\\d)"
+          , description = "At least 1 number"
+          , mandatory = True
+          , validity = No
           , subRules = []
           }
         , { regEx = "(?=.*[A-Z])"
-          , description = "At least one uppercase"
+          , description = "At least 1 uppercase letter"
           , mandatory = True
-          , valid = False
+          , validity = No
           , subRules = []
           }
         , { regEx = "(?=.*[a-z])"
-          , description = "At least one lowercase"
+          , description = "At least 1 lowercase letter"
           , mandatory = True
-          , valid = False
+          , validity = No
           , subRules = []
           }
         , { regEx = "(?=.*[^A-Za-z0-9])"
-          , description = "At least one special character"
+          , description = "At least 1 special character"
           , mandatory = True
-          , valid = False
+          , validity = No
           , subRules =
                 [ { regEx = String.concat [ "^((?!\\s).)*$" ]
-                  , description = "No spaces are allowed"
+                  , description = "No spaces allowed"
                   , mandatory = True
-                  , valid = True
+                  , validity = Yes
                   }
                 , { regEx = String.concat [ "^((?!£).)*$" ]
-                  , description = "No pound(£) symbols are allowed"
+                  , description = "No pound(£) symbols allowed"
                   , mandatory = True
-                  , valid = True
+                  , validity = Yes
                   }
                 ]
           }
-        , { regEx = ".{8,}"
-          , description = "A minimum of 8 characters"
-          , mandatory = True
-          , valid = False
-          , subRules = []
-          }
         ]
-    , valid = False
-    , mdl = Material.model
+    , validity = No
     }
 
 

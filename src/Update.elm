@@ -1,16 +1,12 @@
 module Update exposing (..)
 
 import Types exposing (..)
-import Material
 import Regex
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        Types.Mdl msg' ->
-            Material.update msg' model
-
         AlterPassword newPassword ->
             ( recalculateRules newPassword model
                 |> updateModelValidity
@@ -20,7 +16,9 @@ update msg model =
 
 updateModelValidity : Model -> Model
 updateModelValidity model =
-    { model | valid = List.all (\r -> r.valid) model.rules }
+    let allValid = List.all (\r -> r.validity == Yes) model.rules
+    in
+    { model | valid = if allValid then Yes else No }
 
 
 recalculateRules : String -> Model -> Model
@@ -34,12 +32,20 @@ recalculateRule password passwordRule =
         subRulesCalculated =
             recalculateSubRules password passwordRule
     in
-        { subRulesCalculated | valid = passwordRuleValid password subRulesCalculated }
+        { subRulesCalculated | valid = passwordRuleValidity password subRulesCalculated }
 
 
-passwordRuleValid : String -> PasswordRule -> Bool
-passwordRuleValid password passwordRule =
-    (Regex.contains (Regex.regex passwordRule.regEx) password) && (List.isEmpty passwordRule.subRules || List.all (\r -> r.valid) passwordRule.subRules)
+passwordRuleValidity : String -> PasswordRule -> Validity
+passwordRuleValidity password passwordRule =
+    let rulePasswordValid = Regex.contains (Regex.regex passwordRule.regEx) password
+        subRuleEmpty = List.isEmpty passwordRule.subRules
+    in 
+        if (not rulePasswordValid) then
+            No
+        else if (List.isEmpty passwordRule.subRules || List.all (\r -> r.validity == Yes) passwordRule.subRules) then
+            Yes
+        else
+            Partial
 
 
 recalculateSubRules : String -> PasswordRule -> PasswordRule
@@ -49,8 +55,8 @@ recalculateSubRules password passwordRule =
 
 recalculateSubRule : String -> SubRule -> SubRule
 recalculateSubRule password passwordRule =
-    { passwordRule | valid = (Regex.contains (Regex.regex passwordRule.regEx) password) }
-
-
-calculateRegex =
-    (Regex.contains (Regex.regex ("(?!.*[£])")) "gf£")
+    { passwordRule | valid = 
+        case (Regex.contains (Regex.regex passwordRule.regEx) password) of
+            True -> Yes
+            False -> No
+          }
