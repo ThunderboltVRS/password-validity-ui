@@ -18,7 +18,7 @@ updateModelValidity : Model -> Model
 updateModelValidity model =
     let allValid = List.all (\r -> r.validity == Yes) model.rules
     in
-    { model | valid = if allValid then Yes else No }
+    { model | validity = if allValid then Yes else No }
 
 
 recalculateRules : String -> Model -> Model
@@ -32,7 +32,7 @@ recalculateRule password passwordRule =
         subRulesCalculated =
             recalculateSubRules password passwordRule
     in
-        { subRulesCalculated | valid = passwordRuleValidity password subRulesCalculated }
+        { subRulesCalculated | validity = passwordRuleValidity password subRulesCalculated }
 
 
 passwordRuleValidity : String -> PasswordRule -> Validity
@@ -55,7 +55,7 @@ recalculateSubRules password passwordRule =
 
 recalculateSubRule : String -> SubRule -> SubRule
 recalculateSubRule password passwordRule =
-    { passwordRule | valid = 
+    { passwordRule | validity = 
         case (Regex.contains (Regex.regex passwordRule.regEx) password) of
             True -> Yes
             False -> No

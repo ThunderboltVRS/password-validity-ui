@@ -58,12 +58,12 @@ subRuleWidth =
 
 ruleTextSize : Int
 ruleTextSize =
-    19
+    11
 
 
 subRuleTextSize : Int
 subRuleTextSize =
-    17
+    10
 
 
 minRowHeight : Int
@@ -145,7 +145,7 @@ ruleRow passwordRule =
 ruleCell : PasswordRule -> Html Types.Msg
 ruleCell passwordRule =
     td
-        [ Html.Attributes.style [ ( "vertical-align", "top" ) ]
+        [ Html.Attributes.style [ ( "vertical-align", "top" ), ("padding-top", "2px") ]
         ]
         (List.append
             [ div
@@ -186,7 +186,7 @@ textStyle : Int -> List ( String, String )
 textStyle fontSize =
     [ ( "opacity", "0.9" )
     , ( "font-weight", "400" )
-    , ( "font-size", (toString fontSize) ++ "px" )
+    , ( "font-size", (toString fontSize) ++ "pt" )
     , ( "vertical-align", "top" )
     , ( "font-family", "Segoe UI" )
     ]
