@@ -16,9 +16,13 @@ update msg model =
 
 updateModelValidity : Model -> Model
 updateModelValidity model =
-    let allValid = List.all (\r -> r.validity == Yes) model.rules
-    in
-    { model | validity = if allValid then Yes else No }
+    { model
+        | validity =
+            if List.all (\r -> r.validity == Yes) model.rules then
+                Yes
+            else
+                No
+    }
 
 
 recalculateRules : String -> Model -> Model
@@ -37,9 +41,10 @@ recalculateRule password passwordRule =
 
 passwordRuleValidity : String -> PasswordRule -> Validity
 passwordRuleValidity password passwordRule =
-    let rulePasswordValid = Regex.contains (Regex.regex passwordRule.regEx) password
-        subRuleEmpty = List.isEmpty passwordRule.subRules
-    in 
+    let
+        rulePasswordValid =
+            Regex.contains (Regex.regex passwordRule.regEx) password
+    in
         if (not rulePasswordValid) then
             No
         else if (List.isEmpty passwordRule.subRules || List.all (\r -> r.validity == Yes) passwordRule.subRules) then
@@ -55,8 +60,12 @@ recalculateSubRules password passwordRule =
 
 recalculateSubRule : String -> SubRule -> SubRule
 recalculateSubRule password passwordRule =
-    { passwordRule | validity = 
-        case (Regex.contains (Regex.regex passwordRule.regEx) password) of
-            True -> Yes
-            False -> No
-          }
+    { passwordRule
+        | validity =
+            case (Regex.contains (Regex.regex passwordRule.regEx) password) of
+                True ->
+                    Yes
+
+                False ->
+                    No
+    }

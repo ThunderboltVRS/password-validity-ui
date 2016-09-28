@@ -36,24 +36,19 @@ invalidColor =
     "black"
 
 
-mainTableWidth : String
+mainTableWidth : Int
 mainTableWidth =
-    "400px"
+    100
 
 
-iconCellWidth : String
+iconCellWidth : Int
 iconCellWidth =
-    "40px"
+    40
 
 
-ruleWidth : String
-ruleWidth =
-    "360px"
-
-
-subRuleWidth : String
-subRuleWidth =
-    "300px"
+iconHeight : Int
+iconHeight =
+    20
 
 
 ruleTextSize : Int
@@ -68,7 +63,7 @@ subRuleTextSize =
 
 minRowHeight : Int
 minRowHeight =
-    50
+    25
 
 
 view : Model -> Html Msg
@@ -80,7 +75,7 @@ layoutTable : Model -> Html Types.Msg
 layoutTable model =
     table
         [ Html.Attributes.style
-            [ ( "width", mainTableWidth )
+            [ ( "width", percentUnit mainTableWidth )
             ]
         ]
         (rulesDisplay model)
@@ -95,6 +90,9 @@ ruleIcon : Validity -> Html Types.Msg
 ruleIcon validity =
     img
         [ Html.Attributes.src (validityIcon validity)
+        , Html.Attributes.style
+            [ ( "height", pixelUnit iconHeight )
+            ]
         ]
         []
 
@@ -132,11 +130,11 @@ ruleRow passwordRule =
         (List.append
             [ td
                 [ Html.Attributes.style
-                    [ ( "width", iconCellWidth )
+                    [ ( "width", pixelUnit iconCellWidth )
                     , ( "vertical-align", "initial" )
                     ]
                 ]
-                [ div [ Html.Attributes.style [ ( "min-height", ((toString minRowHeight) ++ "px") ) ] ] [ ruleIcon passwordRule.validity ] ]
+                [ div [ Html.Attributes.style [ ( "min-height", pixelUnit minRowHeight ) ] ] [ ruleIcon passwordRule.validity ] ]
             ]
             ([ ruleCell passwordRule ])
         )
@@ -145,12 +143,12 @@ ruleRow passwordRule =
 ruleCell : PasswordRule -> Html Types.Msg
 ruleCell passwordRule =
     td
-        [ Html.Attributes.style [ ( "vertical-align", "top" ), ("padding-top", "2px") ]
+        [ Html.Attributes.style [ ( "vertical-align", "top" ) ]
         ]
         (List.append
             [ div
                 [ Html.Attributes.style
-                    (List.append ([ ( "width", ruleWidth ), ( "color", validityColor passwordRule.validity ) ]) (textStyle ruleTextSize))
+                    (List.append ([ ( "color", validityColor passwordRule.validity ) ]) (textStyle ruleTextSize))
                 ]
                 [ ruleText passwordRule.description ]
             ]
@@ -167,7 +165,7 @@ subRule : SubRule -> Html Types.Msg
 subRule subRule =
     div
         [ Html.Attributes.style
-            (List.append ([ ( "padding", "2px 2px 2px 15px" ), ( "width", subRuleWidth ), ( "color", partialColor ) ]) (textStyle subRuleTextSize))
+            (List.append ([ ( "padding", "2px 2px 2px 15px" ), ( "color", partialColor ) ]) (textStyle subRuleTextSize))
         ]
         [ subRuleText subRule.description ]
 
@@ -185,8 +183,7 @@ subRuleText description =
 textStyle : Int -> List ( String, String )
 textStyle fontSize =
     [ ( "opacity", "0.9" )
-    , ( "font-weight", "400" )
-    , ( "font-size", (toString fontSize) ++ "pt" )
+    , ( "font-size", pointUnit fontSize )
     , ( "vertical-align", "top" )
     , ( "font-family", "Segoe UI" )
     ]
@@ -196,3 +193,16 @@ ruleRowStyle : List ( String, String )
 ruleRowStyle =
     [ ( "width", "100%" )
     ]
+
+
+pixelUnit : Int -> String
+pixelUnit value =
+    (toString value) ++ "px"
+
+percentUnit : Int -> String
+percentUnit value =
+    (toString value) ++ "%"
+
+pointUnit : Int -> String
+pointUnit value =
+    (toString value) ++ "pt"
